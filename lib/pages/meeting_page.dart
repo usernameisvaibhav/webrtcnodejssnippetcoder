@@ -48,14 +48,18 @@ class _MeetingPageState extends State<MeetingPage> {
 
   void startMeeting() async {
     final String userId = await loadUserId();
+    print("bta ${widget.meetingDetail.id}");
     meetingHelper = WebRTCMeetingHelper(
-      url: "http://localhost:4000",
+      url: "http://192.168.1.26:4000",
       meetingId: widget.meetingDetail.id,
       userId: userId,
+      autoConnect: true,
       name: widget.name,
     );
+
     MediaStream _localStream =
         await navigator.mediaDevices.getUserMedia(mediaConstraints);
+
     meetingHelper!.stream = _localStream;
     _localRenderer.srcObject = _localStream;
 
@@ -130,6 +134,7 @@ class _MeetingPageState extends State<MeetingPage> {
   }
 
   _buildMeetingRoom() {
+    // print("bta ${meetingHelper!.connections.length}");
     return Stack(
       children: [
         meetingHelper != null
