@@ -23,7 +23,6 @@ class _RemoteConnectionState extends State<RemoteConnection> {
           child: RTCVideoView(
             widget.renderer,
             mirror: false,
-            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
           ),
         ),
         Container(

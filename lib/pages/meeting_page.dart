@@ -8,6 +8,8 @@ import 'package:snippetcodervideocall/utils/user.utils.dart';
 import 'package:snippetcodervideocall/widgets/control_panel.dart';
 import 'package:snippetcodervideocall/widgets/remote_connections.dart';
 
+WebRTCMeetingHelper? meetingHelper;
+
 class MeetingPage extends StatefulWidget {
   const MeetingPage(
       {super.key, this.meetingId, this.name, required this.meetingDetail});
@@ -27,23 +29,26 @@ class _MeetingPageState extends State<MeetingPage> {
   };
 
   bool isConnectionFailed = false;
-  WebRTCMeetingHelper? meetingHelper;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black87,
-      body: _buildMeetingRoom(),
-      bottomNavigationBar: ControlPanel(
-        onAudioToggle: onAudioToggle,
-        onVideoToggle: onVideoToggle,
-        videoEnabled: isVideoEnabled(),
-        audioEnabled: isAudioEnabled(),
-        isConnectionFailed: isConnectionFailed,
-        onReconnect: handleReconnect,
-        onMeetingEnd: onMeetingEnd,
-      ),
-    );
+    return meetingHelper == null
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Scaffold(
+            backgroundColor: Colors.black87,
+            body: _buildMeetingRoom(),
+            bottomNavigationBar: ControlPanel(
+              onAudioToggle: onAudioToggle,
+              onVideoToggle: onVideoToggle,
+              videoEnabled: isVideoEnabled(),
+              audioEnabled: isAudioEnabled(),
+              isConnectionFailed: isConnectionFailed,
+              onReconnect: handleReconnect,
+              onMeetingEnd: onMeetingEnd,
+            ),
+          );
   }
 
   void startMeeting() async {
@@ -56,13 +61,14 @@ class _MeetingPageState extends State<MeetingPage> {
       autoConnect: true,
       name: widget.name,
     );
+    setState(() {});
 
     MediaStream _localStream =
         await navigator.mediaDevices.getUserMedia(mediaConstraints);
 
     meetingHelper!.stream = _localStream;
     _localRenderer.srcObject = _localStream;
-
+    meetingHelper!.listenMessage();
     meetingHelper!.on("open", context, (ev, context) {
       setState(() {
         isConnectionFailed = false;
@@ -134,7 +140,7 @@ class _MeetingPageState extends State<MeetingPage> {
   }
 
   _buildMeetingRoom() {
-    // print("bta ${meetingHelper!.connections.length}");
+    print("bta ${meetingHelper!.connections.length}");
     return Stack(
       children: [
         meetingHelper != null
@@ -153,6 +159,11 @@ class _MeetingPageState extends State<MeetingPage> {
                       );
                     }),
                   )
+                // ? Container(
+                //     width: 100,
+                //     height: 100,
+                //     color: Colors.red,
+                //   )
                 : Center(
                     child: Padding(
                       padding: EdgeInsets.all(10),

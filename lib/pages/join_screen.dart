@@ -40,18 +40,11 @@ class _JoinScreenState extends State<JoinScreen> {
             // SizedBox(
             //   height: 20,
             // ),
-            FormHelper.inputFieldWidget(context, "userId", "Enter your Name",
-                (val) {
-              if (val.isEmpty()) {
-                return "Name cant be empty";
-              }
-              return null;
-            }, (onSaved) {
-              userName = onSaved;
-            },
-                borderRadius: 10,
-                borderFocusColor: Colors.redAccent,
-                borderColor: Colors.redAccent),
+            TextField(
+              onChanged: (value) {
+                userName = value;
+              },
+            ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -61,7 +54,8 @@ class _JoinScreenState extends State<JoinScreen> {
                   // if(validateAndSave()){
                   //   // validateMeeting(meetingId);
                   // }
-                  Navigator.pushReplacement(
+
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => MeetingPage(
